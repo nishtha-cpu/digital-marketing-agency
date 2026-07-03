@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+vendor/
+**/vendor/
+
+# Build directories
+dist/
+**/dist/
+frontend/dist/
+
+# Environments
+.env
+.env.local
+.env.*.local
+*.env
+**/.env
+
+# Uploads and cache
+uploads/*
+!uploads/.gitkeep
+**/uploads/*
+!**/uploads/.gitkeep
+
+# System and logs
+logs/
+*.log
+.DS_Store
+.agents/

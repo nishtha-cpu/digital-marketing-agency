@@ -1,5 +1,4 @@
 @import 'tailwindcss' source(none);
 @source '../**/*.{js,ts,jsx,tsx}';
-@source 'C:/Users/CloudWire/Desktop/DM backend/php-app/**/*.php';
 
 @import 'tw-animate-css';
