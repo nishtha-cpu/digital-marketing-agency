@@ -118,7 +118,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (submitBtn) submitBtn.disabled = true;
 
       try {
-        const res = await fetch('api/leads/index.php', {
+        const baseUrl = window.BASE_URL || '';
+        const res = await fetch(`${baseUrl}/api/leads/index.php`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
@@ -150,6 +151,60 @@ document.addEventListener('DOMContentLoaded', () => {
       formStatus.style.cssText = 'background:#eff6ff;color:#1e40af;border-color:#bfdbfe;display:block;padding:1rem;border-radius:0.75rem;margin-top:0.5rem;';
     }
     formStatus.textContent = message;
+  }
+
+  // ─── Newsletter Form AJAX ─────────────────────────────────────────────
+  const newsletterForm      = document.getElementById('newsletter-form');
+  const newsletterStatus    = document.getElementById('newsletter-status');
+  const newsletterSubmitBtn = document.getElementById('newsletter-submit-btn');
+
+  if (newsletterForm) {
+    newsletterForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById('newsletter-email')?.value.trim();
+      if (!email) {
+        showNewsletterStatus('error', 'Please enter a valid email address.');
+        return;
+      }
+
+      showNewsletterStatus('info', 'Subscribing…');
+      if (newsletterSubmitBtn) newsletterSubmitBtn.disabled = true;
+
+      try {
+        const baseUrl = window.BASE_URL || '';
+        const res = await fetch(`${baseUrl}/api/newsletter/subscribe.php`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+        const result = await res.json();
+        if (result.success) {
+          showNewsletterStatus('success', result.message || 'Subscribed successfully! Thank you.');
+          newsletterForm.reset();
+        } else {
+          showNewsletterStatus('error', result.message || 'Failed to subscribe. Please try again.');
+        }
+      } catch (err) {
+        console.error('Newsletter error:', err);
+        showNewsletterStatus('error', 'An error occurred. Please try again later.');
+      } finally {
+        if (newsletterSubmitBtn) newsletterSubmitBtn.disabled = false;
+      }
+    });
+  }
+
+  function showNewsletterStatus(type, message) {
+    if (!newsletterStatus) return;
+    newsletterStatus.style.display = 'block';
+    if (type === 'success') {
+      newsletterStatus.style.color = '#86efac';
+    } else if (type === 'error') {
+      newsletterStatus.style.color = '#fca5a5';
+    } else {
+      newsletterStatus.style.color = 'rgba(255,255,255,0.8)';
+    }
+    newsletterStatus.textContent = message;
   }
 
 });

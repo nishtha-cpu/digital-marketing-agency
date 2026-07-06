@@ -60,6 +60,11 @@
   <!-- Lucide Icons (CDN – replaces lucide-react) -->
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 
+  <!-- Inject Base URL for AJAX scripts -->
+  <script>
+    window.BASE_URL = '<?= defined('BASE_URL') ? BASE_URL : '' ?>';
+  </script>
+
   <!-- Open Graph -->
   <meta property="og:title"       content="<?= htmlspecialchars($pageTitle ?? 'Prayogbharti Foundation') ?>">
   <meta property="og:description" content="<?= htmlspecialchars($metaDescription ?? 'Empowering lives through education, scholarships, mentorship, and STEM programs.') ?>">

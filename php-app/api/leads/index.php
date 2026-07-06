@@ -8,7 +8,7 @@
  * DELETE /api/leads/index.php?id=X    – Admin:   delete lead (deleteLead)
  */
 
-require_once __DIR__ . '/../../api/_helpers.php';
+require_once __DIR__ . '/../_helpers.php';
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
@@ -22,11 +22,17 @@ $pdo    = db();
 
 /* ── POST: Create Lead (public contact form) ───────────── */
 if ($method === 'POST') {
+    if (defined('APP_ENV') && APP_ENV === 'development') {
+        ini_set('display_errors', 1);
+        ini_set('display_startup_errors', 1);
+        error_reporting(E_ALL);
+    }
+
     $body    = json_decode(file_get_contents('php://input'), true);
     $name    = trim($body['name']            ?? '');
     $email   = strtolower(trim($body['email']   ?? ''));
     $phone   = trim($body['phone']           ?? '');
-    $interest = trim($body['serviceInterest'] ?? 'General Inquiry');
+    $interest = trim($body['service_interest'] ?? $body['serviceInterest'] ?? 'General Inquiry');
     $message = trim($body['message']         ?? '');
 
     if (!$name || !$email || !$message) {
@@ -36,15 +42,43 @@ if ($method === 'POST') {
         jsonResponse(['success' => false, 'message' => 'Please add a valid email'], 400);
     }
 
-    $stmt = $pdo->prepare("INSERT INTO leads (name, email, phone, service_interest, message) VALUES (?, ?, ?, ?, ?)");
-    $stmt->execute([$name, $email, $phone ?: null, $interest, $message]);
-    $id = $pdo->lastInsertId();
+    try {
+        $stmt = $pdo->prepare("INSERT INTO leads (name, email, phone, service_interest, message) VALUES (?, ?, ?, ?, ?)");
+        $stmt->execute([$name, $email, $phone ?: null, $interest, $message]);
+        $id = $pdo->lastInsertId();
 
-    jsonResponse([
-        'success' => true,
-        'message' => 'Contact form submitted successfully',
-        'data'    => ['id' => $id, 'name' => $name, 'email' => $email, 'status' => 'new']
-    ], 201);
+        jsonResponse([
+            'success' => true,
+            'message' => 'Contact form submitted successfully',
+            'data'    => ['id' => $id, 'name' => $name, 'email' => $email, 'status' => 'new']
+        ], 201);
+    } catch (PDOException $e) {
+        if (defined('APP_ENV') && APP_ENV === 'development') {
+            jsonResponse([
+                'success' => false,
+                'message' => 'Database error: ' . $e->getMessage(),
+                'error'   => $e->getMessage()
+            ], 500);
+        } else {
+            jsonResponse([
+                'success' => false,
+                'message' => 'An error occurred. Please try again later.'
+            ], 500);
+        }
+    } catch (Exception $e) {
+        if (defined('APP_ENV') && APP_ENV === 'development') {
+            jsonResponse([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage(),
+                'error'   => $e->getMessage()
+            ], 500);
+        } else {
+            jsonResponse([
+                'success' => false,
+                'message' => 'An error occurred. Please try again later.'
+            ], 500);
+        }
+    }
 }
 
 /* ── GET: List Leads (admin only) ──────────────────────── */

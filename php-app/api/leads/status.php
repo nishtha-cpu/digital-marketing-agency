@@ -6,7 +6,7 @@
  * PATCH /api/leads/status.php?id=X – Admin: update lead status
  */
 
-require_once __DIR__ . '/../../api/_helpers.php';
+require_once __DIR__ . '/../_helpers.php';
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');

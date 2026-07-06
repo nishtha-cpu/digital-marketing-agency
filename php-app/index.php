@@ -399,6 +399,30 @@ include __DIR__ . '/includes/header.php';
     </div>
   </section>
 
+  <!-- NEWSLETTER -->
+  <section class="newsletter-section">
+    <div class="newsletter-inner max-w-7xl mx-auto px-6 lg:px-10">
+      <div class="newsletter-text">
+        <h3>Stay in the Loop</h3>
+        <p>Get updates on scholarships, events, and impact stories — straight to your inbox.</p>
+      </div>
+      <form class="newsletter-form" id="newsletter-form" novalidate>
+        <input
+          type="email"
+          name="newsletter_email"
+          id="newsletter-email"
+          placeholder="Enter your email address"
+          class="newsletter-input"
+          required
+        />
+        <button type="submit" id="newsletter-submit-btn" class="newsletter-btn">
+          Subscribe
+        </button>
+      </form>
+    </div>
+    <div id="newsletter-status" style="display:none; text-align:center; margin-top:0.75rem; font-size:0.875rem; font-weight:600;"></div>
+  </section>
+
   <!-- CONTACT -->
   <section id="contact" class="py-24 bg-background">
     <div class="max-w-7xl mx-auto px-6 lg:px-10 grid lg:grid-cols-2 gap-16">
